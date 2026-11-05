@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Премиальная Студия Татуировки</title>
+    <!-- Подключаем Tailwind CSS -->
+    <script src="tailwind.js"></script>
+    <!-- Подключаем дорогой шрифт с засечками для заголовков (Cormorant Garamond) -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .serif-title { font-family: 'Cormorant Garamond', serif; }
+    </style>
+</head>
+<body class="bg-[#181818] text-[#E0E0E0] selection:bg-[#C5A880] selection:text-black">
+
+    <!-- 1. НАВИГАЦИЯ -->
+    <nav class="border-b border-[#2C2C2C] bg-[#181818]/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="serif-title text-2xl font-bold tracking-widest text-[#C5A880]">INK & GOLD</div>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest text-gray-400">
+            <a href="#gallery" class="hover:text-[#C5A880] transition">Галерея</a>
+            <a href="#masters" class="hover:text-[#C5A880] transition">Мастера</a>
+            <a href="#booking" class="hover:text-[#C5A880] transition">Запись</a>
+        </div>
+        <a href="#booking" class="border border-[#C5A880] text-[#C5A880] hover:bg-[#C5A880] hover:text-black px-5 py-2 text-xs uppercase tracking-widest transition duration-300">
+            Запись на сеанс
+        </a>
+    </nav>
+
+    <!-- 2. ГЛАВНЫЙ ЭКРАН (HERO) -->
+    <section class="max-w-7xl mx-auto px-6 py-16 md:py-28 flex flex-col md:flex-row items-center gap-12 border-b border-[#2C2C2C]">
+        <div class="flex-1 space-y-6">
+            <span class="text-xs uppercase tracking-[0.3em] text-[#C5A880] font-medium">Премиальная тату-студия</span>
+            <h1 class="serif-title text-5xl md:text-7xl font-light text-white leading-tight">
+                Больше чем искусство. <br><span class="italic text-[#C5A880]">Твоя история на коже.</span>
+            </h1>
+            <p class="text-gray-400 font-light leading-relaxed max-w-lg text-sm md:text-base">
+                Индивидуальные эскизы в стилях графики, реализма и тонких линий. Полная стерильность, мастера с художественным образованием и забота о вашем комфорте.
+            </p>
+            <div class="pt-4">
+                <a href="#booking" class="bg-[#C5A880] text-black px-8 py-4 uppercase text-xs font-semibold tracking-[0.2em] hover:bg-white transition duration-300 inline-block">
+                    Забронировать время
+                </a>
+            </div>
+        </div>
+        <!-- Заглушка под сочное черно-белое фото мастера или процесса -->
+        <div class="flex-1 w-full aspect-[4/5] bg-[#222222] border border-[#2C2C2C] relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent z-10"></div>
+            <img src="https://unsplash.com" alt="Tattoo Process" class="w-full h-full object-cover grayscale opacity-60 group-hover:scale-105 transition duration-700">
+        </div>
+    </section>
+
+    <!-- 3. ГАЛЕРЕЯ РАБОТ -->
+    <section id="gallery" class="max-w-7xl mx-auto px-6 py-20 border-b border-[#2C2C2C]">
+        <div class="text-center space-y-4 mb-16">
+            <h2 class="serif-title text-4xl md:text-5xl font-light text-white">Портфолио Студии</h2>
+            <p class="text-xs uppercase tracking-widest text-[#C5A880]">Нажмите на фото, чтобы рассмотреть детали</p>
+        </div>
+        <!-- Сетка галереи -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="aspect-square bg-[#222222] border border-[#2C2C2C] overflow-hidden group"><img src="https://unsplash.com" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500"></div>
+            <div class="aspect-square bg-[#222222] border border-[#2C2C2C] overflow-hidden group"><img src="https://unsplash.com" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500"></div>
+            <div class="aspect-square bg-[#222222] border border-[#2C2C2C] overflow-hidden group"><img src="https://unsplash.com" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500"></div>
+        </div>
+    </section>
+
+    <!-- 4. ИНТЕРАКТИВНАЯ ЗАПИСЬ (ФОРМА) -->
+    <section id="booking" class="max-w-3xl mx-auto px-6 py-20">
+        <div class="text-center space-y-4 mb-12">
+            <h2 class="serif-title text-4xl font-light text-white">Онлайн Бронирование Сеанса</h2>
+            <p class="text-sm text-gray-400 font-light">Выберите желаемые параметры, система автоматически подберет свободные окна.</p>
+        </div>
+
+        <form class="space-y-8 bg-[#202020] border border-[#2C2C2C] p-8 md:p-12">
+            <!-- Поля ввода -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs uppercase tracking-widest text-gray-400">Ваше Имя</label>
+                    <input type="text" class="w-full bg-[#181818] border border-[#3A3A3A] px-4 py-3 text-sm focus:outline-none focus:border-[#C5A880] transition text-white" placeholder="Александр">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs uppercase tracking-widest text-gray-400">Телефон (Telegram/WhatsApp)</label>
+                    <input type="tel" class="w-full bg-[#181818] border border-[#3A3A3A] px-4 py-3 text-sm focus:outline-none focus:border-[#C5A880] transition text-white" placeholder="+7 (999) 000-00-00">
+                </div>
+            </div>
+
+            <!-- Интерактивный Выбор Даты (Заготовка) -->
+            <div class="space-y-3">
+                <label class="text-xs uppercase tracking-widest text-gray-400 block">Желаемая Дата Сеанса</label>
+                <!-- Простое горизонтальное мини-расписание на неделю вперед -->
+                <div class="grid grid-cols-4 sm:grid-cols-7 gap-3 text-center">
+                    <div class="border border-[#C5A880] bg-[#C5A880] text-black p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-900">Пн</span>19 Окт</div>
+                    <div class="border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-500">Вт</span>20 Окт</div>
+                    <div class="border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-500">Ср</span>21 Окт</div>
+                    <div class="border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-500">Чт</span>22 Окт</div>
+                    <div class="border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-500">Пт</span>23 Окт</div>
+                    <div class="border border-[#444] opacity-40 p-3 text-sm bg-striped cursor-not-allowed"><span class="block text-xs">Сб</span>Занято</div>
+                    <div class="border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer"><span class="block text-xs text-gray-500">Вс</span>25 Окт</div>
+                </div>
+            </div>
+
+            <!-- Интерактивный Выбор Времени -->
+            <div class="space-y-3">
+                <label class="text-xs uppercase tracking-widest text-gray-400 block">Доступное Время сеанса</label>
+                <div class="flex flex-wrap gap-3">
+                    <button type="button" class="border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880]">10:00 (Утро)</button>
+                    <button type="button" class="border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white">14:00 (День)</button>
+                    <button type="button" class="border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white">18:00 (Вечер)</button>
+                </div>
+            </div>
+
+            <!-- Описание идеи -->
+            <div class="space-y-2">
+                <label class="text-xs uppercase tracking-widest text-gray-400">Описание идеи тату и места нанесения</label>
+                <textarea rows="3" class="w-full bg-[#181818] border border-[#3A3A3A] px-4 py-3 text-sm focus:outline-none focus:border-[#C5A880] transition text-white placeholder-gray-600" placeholder="Например: Хочу ч/б льва на предплечье в реализме, размер примерно 15х10 см..."></textarea>
+            </div>
+
+            <!-- Кнопка отправки -->
+            <button type="submit" class="w-full bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] py-4 hover:bg-white transition duration-300">
+                Отправить заявку мастеру
+            </button>
+        </form>
+    </section>
+
+    <!-- ПОДВАЛ (FOOTER) -->
+    <footer class="border-t border-[#2C2C2C] py-8 text-center text-xs text-gray-500 tracking-wider">
+        © 2026 INK & GOLD. Разработано специально для демонстрации автозаписи.
+    </footer>
+    <!-- Подключаем локальный файл Supabase, который мы скачали -->
+    <!-- Стало: -->
+        <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
+    <script>
+        // 1. НАСТРОЙКА ПОДКЛЮЧЕНИЯ (Прямой HTTP REST-клиент)
+        const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl"; // ID вашего проекта из скриншотов
+        const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
+
+        // Вставьте сюда ВАШ реальный длинный anon public ключ (скопируйте его с вашего первого скриншота)
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
+
+        // Переменные для хранения выбора пользователя
+        let selectedDate = "19 Окт";
+        let selectedTime = "10:00";
+
+        // 2. ЛОГИКА ИНТЕРАКТИВНОГО КАЛЕНДАРЯ (КЛИКИ)
+        // Находим элементы дат и времени
+        const dateCards = document.querySelectorAll('#booking .grid-cols-4 > div, #booking .grid-cols-7 > div');
+        const timeButtons = document.querySelectorAll('#booking .flex button');
+
+        // Клик по дате
+        dateCards.forEach(card => {
+            if (card.classList.contains('cursor-not-allowed')) return; // Игнорируем занятые
+
+            card.addEventListener('click', () => {
+                dateCards.forEach(c => {
+                    c.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer";
+                    const span = c.querySelector('span');
+                    if(span) span.className = "block text-xs text-gray-500";
+                });
+                card.className = "border border-[#C5A880] bg-[#C5A880] text-black p-3 text-sm cursor-pointer";
+                const span = card.querySelector('span');
+                if(span) span.className = "block text-xs text-gray-900";
+
+                // Извлекаем только число и месяц (например "20 Окт")
+                selectedDate = card.innerText.replace(/^[А-Яа-я\s]+/, '').replace(/\n/g, ' ').trim();
+            });
+        });
+
+        // Клик по времени
+        timeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                timeButtons.forEach(b => {
+                    b.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white";
+                });
+                btn.className = "border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880]";
+
+                // Забираем чистое время, убирая пояснения в скобках
+                selectedTime = btn.innerText.split(' ')[0].trim();
+            });
+        });
+                // 3. ОТПРАВКА ДАННЫХ ЧЕРЕЗ СТАНДАРТНЫЙ FETCH API
+        const bookingForm = document.querySelector('#booking form');
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nameInput = bookingForm.querySelector('input[type="text"]').value.trim();
+            const phoneInput = bookingForm.querySelector('input[type="tel"]').value.trim();
+            const noteInput = bookingForm.querySelector('textarea').value.trim();
+
+            if (!nameInput || !phoneInput) {
+                alert("Пожалуйста, заполните Имя и Телефон.");
+                return;
+            }
+
+            const submitBtn = bookingForm.querySelector('button[type="submit"]');
+            submitBtn.innerText = "ОТПРАВЛЯЕМ ЗАЯВКУ...";
+            submitBtn.disabled = true;
+
+            const payload = {
+                name: nameInput,
+                phone: phoneInput,
+                date: String(selectedDate).trim(),
+                time: String(selectedTime).trim(),
+                note: noteInput
+            };
+
+            try {
+                // Сайт общается СТРОГО только с Supabase, обходя все блокировки ТГ
+                const response = await fetch(SUPABASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    // Оставляем только чистую логику успеха на сайте
+                    alert(`Успешно! Спасибо, ${nameInput}. Вы записаны на ${selectedDate} в ${selectedTime}.`);
+                    bookingForm.reset();
+                    submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
+                    submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";
+                    submitBtn.disabled = false;
+                } else {
+                    const errText = await response.text();
+                    console.error("ОТКАЗ БАЗЫ ДАННЫХ:", errText);
+                    alert("Ошибка базы данных. Проверьте консоль.");
+                    submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
+                    submitBtn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Сетевая ошибка fetch:", err);
+                alert("Не удалось связаться с сервером базы данных.");
+                submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

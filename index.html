@@ -235,7 +235,7 @@
                 });
 
                 if (response.ok) {
-                    alert(`Успешно! Спасибо, ${nameInput}. Заявка передана мастеру [${currentMasterId}].`);
+                    alert(`Успешно! Спасибо, ${nameInput}. Заявка передана мастеру ${currentMasterId}.`);
                     bookingForm.reset();
                     submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
                     submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";

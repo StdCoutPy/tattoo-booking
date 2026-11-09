@@ -222,37 +222,7 @@
                 master_id: currentMasterId // Передаем перехваченный из ссылки ID
             };
 
-            try {
-                const response = await fetch(SUPABASE_URL, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify(payload)
-                });
 
-                if (response.ok) {
-                    alert(`Успешно! Спасибо, ${nameInput}. Заявка передана мастеру [${currentMasterId}].`);
-                    bookingForm.reset();
-                    submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
-                    submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";
-                    submitBtn.disabled = false;
-                } else {
-                    const errText = await response.text();
-                    console.error("Отказ базы:", errText);
-                    alert("Ошибка базы данных. Убедитесь, что колонка master_id создана.");
-                    submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
-                    submitBtn.disabled = false;
-                }
-            } catch (err) {
-                console.error("Ошибка сети fetch:", err);
-                alert("Не удалось связаться с сервером базы данных.");
-                submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
-                submitBtn.disabled = false;
-            }
         });
     </script>
 

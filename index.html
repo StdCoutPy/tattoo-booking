@@ -171,23 +171,40 @@ if (!currentMasterId) {
     console.log("Мастер не указан в URL. Используется: default_master");
 } else {
     currentMasterId = currentMasterId.trim().toLowerCase();
-    console.log(`Сайт инициализирован под мастера: [${currentMasterId}]`);
+    console.log(`Сайт успешно инициализирован под мастера: [${currentMasterId}]`);
 
-    // 🔥 МАГИЯ: Автоматически меняем фото портфолио под конкретного мастера!
     const content = mastersContent[currentMasterId] || mastersContent["default_master"];
 
-    // 1. Меняем заголовок над галереей
-    const portfolioTitle = document.querySelector('#portfolio h2');
-    if (portfolioTitle) portfolioTitle.innerText = content.title;
-
-    // 2. Находим все теги <img> внутри блока портфолио и меняем им src
-    const portfolioImages = document.querySelectorAll('#portfolio img');
-    portfolioImages.forEach((img, index) => {
-        if (content.photos[index]) {
-            img.src = content.photos[index];
+    // 1. Точный поиск заголовка портфолио по тексту
+    const allH2 = document.querySelectorAll('h2');
+    allH2.forEach(h2 => {
+        if (h2.innerText.includes('Портфолио')) {
+            h2.innerText = content.title; // Заменяет "Портфолио Студии" на "Портфолио Алексея (Графика)"
         }
     });
+
+    // 2. Ищем вообще ВСЕ теги <img> на странице, чтобы точно зацепить галерею
+    const allImages = document.querySelectorAll('img');
+
+    if (allImages.length > 0) {
+        let photoIndex = 0;
+        allImages.forEach((img) => {
+            // Пропускаем аватарки или иконки, если у них в адресе есть слово icon или logo
+            if (img.src.includes('logo') || img.src.includes('icon')) return;
+
+            // Если для этого номера картинки у мастера есть фото — подменяем!
+            if (content.photos[photoIndex]) {
+                img.src = content.photos[photoIndex];
+                img.removeAttribute('srcset'); // Очищаем кэш адаптивности Vercel
+                console.log(`Успешно заменено фото №${photoIndex + 1} для мастера [${currentMasterId}]`);
+                photoIndex++;
+            }
+        });
+    } else {
+        console.log("Предупреждение: Теги <img> на странице не найдены. Возможно, фото зашиты в CSS фоном.");
+    }
 }
+
 
 
 // 2. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE

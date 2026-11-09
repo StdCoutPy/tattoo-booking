@@ -134,125 +134,160 @@
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
-                // Справочник контента для каждого мастера (фотографии работ)
-const mastersContent = {
-    "leha_ink": {
-        "title": "Портфолио Алексея (Графика)",
-        "photos": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQaFHoIUS8IRmkPxQFtHLyAMF7btR3sMhozZvdn5byjydGd2oZjsqmPKO&s=10", // Ссылка на 1-е тату Лёхи
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaOUb2T3uT5vOi6bfM8WuDvE49AZcRZBKQBl7Kjf3n7cYDOa1AJuMi258&s=10", // Ссылка на 2-е тату Лёхи
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcQRC-V03AruMVL6w9xbpInT_bMCifbph_GcSahW70RwME0Y8hh1DvNiE0&s=10",  // Ссылка на 3-е тату Лёхи
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcQRC-V03AruMVL6w9xbpInT_bMCifbph_GcSahW70RwME0Y8hh1DvNiE0&s=10"  // Ссылка на 4-е тату Лёхи
-
-        ]
-    },
-    "ilya_tattoo": {
-        "title": "Портфолио Ильи (Реализм)",
-        "photos": [
-            "https://justdotattoo.ru/upload/medialibrary/fa2/lag601bjbvs69w8b3m1tfai8h34g2beg.jpg", // Ссылка на 1-е тату Ильи
-            "https://i.pinimg.com/736x/46/b4/fb/46b4fb18a8ad4fdb1ede80cd11e317f4.jpg", // Ссылка на 2-е тату Ильи
-            "https://arleysign.com/image/posts_images/blog_post_1761064608_257.png",  // Ссылка на 3-е тату Ильи
-            "https://arleysign.com/image/posts_images/blog_post_1761064608_257.png"  // Ссылка на 4-е тату Ильи
-        ]
-    },
-    "default_master": {
-        "title": "Портфолио Нашей Студии",
-        "photos": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSV7umdPltb2FI9cMY8Z_d9y_QL6gVvFiko_VFyN0SCsKte6lqBUSpoSfI&s=10",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSV7umdPltb2FI9cMY8Z_d9y_QL6gVvFiko_VFyN0SCsKte6lqBUSpoSfI&s=10",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSV7umdPltb2FI9cMY8Z_d9y_QL6gVvFiko_VFyN0SCsKte6lqBUSpoSfI&s=10",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSV7umdPltb2FI9cMY8Z_d9y_QL6gVvFiko_VFyN0SCsKte6lqBUSpoSfI&s=10"
-        ]
-    }
-};
-
-        // 1. АВТОМАТИЧЕСКИЙ ПЕРЕХВАТ МАСТЕРА ИЗ URL-СТРОКИ
+               // 1. АВТОМАТИЧЕСКИЙ ПЕРЕХВАТ МАСТЕРА ИЗ URL-СТРОКИ
 const urlParams = new URLSearchParams(window.location.search);
 let currentMasterId = urlParams.get('master');
-
 if (!currentMasterId) {
     currentMasterId = "default_master";
-    console.log("Мастер не указан в URL. Используется: default_master");
 } else {
     currentMasterId = currentMasterId.trim().toLowerCase();
-    console.log(`Сайт успешно инициализирован под мастера: [${currentMasterId}]`);
-
-    const content = mastersContent[currentMasterId] || mastersContent["default_master"];
-
-    // 1. Точный поиск заголовка портфолио по тексту
-    const allH2 = document.querySelectorAll('h2');
-    allH2.forEach(h2 => {
-        if (h2.innerText.includes('Портфолио')) {
-            h2.innerText = content.title; // Заменяет "Портфолио Студии" на "Портфолио Алексея (Графика)"
-        }
-    });
-
-    // 2. Ищем вообще ВСЕ теги <img> на странице, чтобы точно зацепить галерею
-    const allImages = document.querySelectorAll('img');
-
-    if (allImages.length > 0) {
-        let photoIndex = 0;
-        allImages.forEach((img) => {
-            // Пропускаем аватарки или иконки, если у них в адресе есть слово icon или logo
-            if (img.src.includes('logo') || img.src.includes('icon')) return;
-
-            // Если для этого номера картинки у мастера есть фото — подменяем!
-            if (content.photos[photoIndex]) {
-                img.src = content.photos[photoIndex];
-                img.removeAttribute('srcset'); // Очищаем кэш адаптивности Vercel
-                console.log(`Успешно заменено фото №${photoIndex + 1} для мастера [${currentMasterId}]`);
-                photoIndex++;
-            }
-        });
-    } else {
-        console.log("Предупреждение: Теги <img> на странице не найдены. Возможно, фото зашиты в CSS фоном.");
-    }
 }
-
-
 
 // 2. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
 const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
 const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
 
-// Переменные для хранения выбора пользователя
-let selectedDate = "19 Окт";
-let selectedTime = "10:00";
+let selectedDate = "";
+let selectedTime = "";
 
-// 3. ЛОГИКА ИНТЕРАКТИВНОГО КАЛЕНДАРЯ (КЛИКИ)
-const dateCards = document.querySelectorAll('#booking .grid-cols-4 > div, #booking .grid-cols-7 > div');
-const timeButtons = document.querySelectorAll('#booking .flex button');
+// Справочник портфолио
+const mastersContent = {
+    "leha_ink": { "title": "Портфолио Алексея (Графика)", "photos": ["https://ibb.co", "https://ibb.co", "https://ibb.co"] },
+    "ilya_tattoo": { "title": "Портфолио Ильи (Реализм)", "photos": ["https://ibb.co", "https://ibb.co", "https://ibb.co"] },
+    "default_master": { "title": "Портфолио Нашей Студии", "photos": ["https://ibb.co", "https://ibb.co", "https://ibb.co"] }
+};
 
-dateCards.forEach(card => {
-    if (card.classList.contains('cursor-not-allowed')) return;
-    card.addEventListener('click', () => {
-        dateCards.forEach(c => {
-            c.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer";
-            const span = c.querySelector('span');
-            if(span) span.className = "block text-xs text-gray-500";
+// 3. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ КАЛЕНДАРЯ НА НЕДЕЛЮ ВПЕРЕД
+function initDynamicCalendar(bookedSlots) {
+    const calendarContainer = document.querySelector('#booking .grid-cols-4, #booking .grid-cols-7');
+    if (!calendarContainer) return;
+
+    calendarContainer.innerHTML = ""; // Очищаем старые статические дни
+
+    const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+
+    // Генерируем 7 дней начиная с сегодняшнего
+    for (let i = 0; i < 7; i++) {
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + i);
+
+        const dayName = daysOfWeek[targetDate.getDay()];
+        const dayNum = targetDate.getDate();
+        const monthName = months[targetDate.getMonth()];
+
+        const dateString = `${dayNum} ${monthName}`;
+
+        const dayCard = document.createElement('div');
+        dayCard.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer text-center transition-all";
+        dayCard.innerHTML = `<span class="block text-xs text-gray-500">${dayName}</span>${dateString}`;
+
+        // Клик по дню
+        dayCard.addEventListener('click', () => {
+            document.querySelectorAll('#booking .grid-cols-4 > div, #booking .grid-cols-7 > div').forEach(c => {
+                c.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer text-center";
+                if(c.querySelector('span')) c.querySelector('span').className = "block text-xs text-gray-500";
+            });
+            dayCard.className = "border border-[#C5A880] bg-[#C5A880] text-black p-3 text-sm cursor-pointer text-center font-bold";
+            if(dayCard.querySelector('span')) dayCard.querySelector('span').className = "block text-xs text-gray-900";
+
+            selectedDate = dateString;
+            renderTimeSlots(dateString, bookedSlots); // Перерисовываем часы под выбранный день!
         });
-        card.className = "border border-[#C5A880] bg-[#C5A880] text-black p-3 text-sm cursor-pointer";
-        const span = card.querySelector('span');
-        if(span) span.className = "block text-xs text-gray-900";
 
-        selectedDate = card.innerText.replace(/^[А-Яа-я\s]+/, '').replace(/\n/g, ' ').trim();
-    });
-});
+        calendarContainer.appendChild(dayCard);
 
-timeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        timeButtons.forEach(b => {
-            b.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white";
+        // Автокликаем на первый (сегодняшний) день для инициализации
+        if (i === 0) dayCard.click();
+    }
+}
+
+// 4. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ ЧАСОВЫХ СЛОТОВ (КАЖДЫЙ ЧАС) С ПРОВЕРКОЙ ЗАНЯТОСТИ
+function renderTimeSlots(dateStr, bookedSlots) {
+    const timeContainer = document.querySelector('#booking .flex.flex-wrap') || document.querySelector('#booking .flex');
+    if (!timeContainer) return;
+
+    timeContainer.innerHTML = ""; // Очищаем старые кнопки часов
+    timeContainer.className = "flex flex-wrap gap-2 mt-2"; // Корректируем стили под сетку
+
+    // Генерируем каждый час с 10:00 до 20:00
+    for (let hour = 10; hour <= 20; hour++) {
+        const timeStr = `${hour}:00`;
+
+        // Проверяем, занят ли этот слот у текущего мастера в эту дату
+        const isBooked = bookedSlots.some(slot => slot.date === dateStr && slot.time === timeStr);
+
+        const btn = document.createElement('button');
+        btn.type = "button";
+
+        if (isBooked) {
+            // Если занято — делаем кнопку серой и некликбельной
+            btn.className = "border border-red-900/30 bg-red-950/10 text-gray-600 px-4 py-2 text-xs uppercase tracking-wider cursor-not-allowed";
+            btn.innerText = `${timeStr} (Занято)`;
+            btn.disabled = true;
+        } else {
+            // Если свободно — обычная стильная кнопка
+            btn.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white transition-all";
+            btn.innerText = timeStr;
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#booking button[type="button"]').forEach(b => {
+                    if(!b.disabled) b.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white";
+                });
+                btn.className = "border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880] font-bold";
+                selectedTime = timeStr;
+            });
+        }
+
+        timeContainer.appendChild(btn);
+    }
+}
+
+// 5. ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ ИЗ SUPABASE ПРИ ОТКРЫТИИ СТРАНИЦЫ
+async function loadBookings() {
+    try {
+        // Скачиваем из базы данных только актуальные даты и время занятых слотов этого мастера
+        const response = await fetch(`${SUPABASE_URL}?master_id=eq.${currentMasterId}&select=date,time`, {
+            method: 'GET',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
         });
-        btn.className = "border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880]";
-        selectedTime = btn.innerText.split('\n')[0].trim();
-    });
-});
 
-// 4. ЛОГИКА ОТПРАВКИ ФОРМЫ В БАЗУ ДАННЫХ С МЕТКОЙ МАСТЕРА
+        const bookedSlots = response.ok ? await response.json() : [];
+
+        // Инициализируем календарь со справочником занятых окон
+        initDynamicCalendar(bookedSlots);
+
+        // Обновляем визуальный контент портфолио
+        const content = mastersContent[currentMasterId] || mastersContent["default_master"];
+        const portfolioTitle = document.querySelector('h2');
+        if (portfolioTitle) portfolioTitle.innerText = content.title;
+
+        const allImages = document.querySelectorAll('img');
+        let photoIndex = 0;
+        allImages.forEach((img) => {
+            if (img.src.includes('logo') || img.src.includes('icon')) return;
+            if (content.photos[photoIndex]) {
+                img.src = content.photos[photoIndex];
+                img.removeAttribute('srcset');
+                photoIndex++;
+            }
+        });
+
+    } catch (err) {
+        console.error("Ошибка загрузки занятых слотов:", err);
+        initDynamicCalendar([]); // В случае сбоя сети выводим пустой календарь
+    }
+}
+
+// Запускаем сборку данных при загрузке страницы
+loadBookings();
+
+// 6. ЛОГИКА ОТПРАВКИ ФОРМЫ
 const bookingForm = document.querySelector('#booking form');
-
 bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -260,8 +295,8 @@ bookingForm.addEventListener('submit', async (e) => {
     const phoneInput = bookingForm.querySelector('input[type="tel"]').value.trim();
     const noteInput = bookingForm.querySelector('textarea').value.trim();
 
-    if (!nameInput || !phoneInput) {
-        alert("Пожалуйста, заполните Имя и Телефон.");
+    if (!nameInput || !phoneInput || !selectedDate || !selectedTime) {
+        alert("Пожалуйста, заполните все поля и выберите Дату и Время сеанса.");
         return;
     }
 
@@ -269,7 +304,6 @@ bookingForm.addEventListener('submit', async (e) => {
     submitBtn.innerText = "ОТПРАВЛЯЕМ ЗАЯВКУ...";
     submitBtn.disabled = true;
 
-    // 🔥 ДОБАВИЛИ master_id В PAYLOAD
     const payload = {
         name: nameInput,
         phone: phoneInput,
@@ -292,25 +326,24 @@ bookingForm.addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            alert(`Успешно! Спасибо, ${nameInput}. Заявка передана мастеру.`);
+            alert(`Успешно записано! Дата: ${selectedDate}, Время: ${selectedTime}.`);
             bookingForm.reset();
             submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
             submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";
             submitBtn.disabled = false;
+            loadBookings(); // Перезагружаем календарь, чтобы только что занятый слот сразу стал красным!
         } else {
-            const errText = await response.text();
-            console.error("Отказ базы данных:", errText);
-            alert("Ошибка базы данных. Убедитесь, что колонка master_id создана в Supabase.");
             submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
             submitBtn.disabled = false;
+            alert("Ошибка сохранения записи.");
         }
     } catch (err) {
-        console.error("Сетевая ошибка fetch:", err);
-        alert("Не удалось связаться с сервером.");
         submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
         submitBtn.disabled = false;
+        alert("Ошибка сети.");
     }
 });
+
 
     </script>
 

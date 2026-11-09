@@ -19,7 +19,7 @@ export default async function handler(req, res) {
             };
             const masterSettings = mastersConfig[masterId] || mastersConfig["default_master"];
 
-            const SUPABASE_URL = "https://supabase.co";
+            const SUPABASE_URL = "https://wbmyfiuhgsylloypajcl.supabase.co/rest/v1/";
             const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
             let updatedText = "";
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
             }
 
             // Обновляем текст в ТГ и скрываем инлайн-кнопки
-            await fetch(`https://telegram.org{masterSettings.token}/editMessageText`, {
+            await fetch(`https://api.telegram.org/bot{masterSettings.token}/editMessageText`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
             });
 
             // Гасим часики на кнопке в ТГ
-            await fetch(`https://telegram.org{masterSettings.token}/answerCallbackQuery`, {
+            await fetch(`https://api.telegram.org/bot{masterSettings.token}/answerCallbackQuery`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ callback_query_id: callbackQuery.id })
@@ -101,7 +101,7 @@ export default async function handler(req, res) {
             ]
         };
 
-        await fetch(`https://telegram.org{masterSettings.token}/sendMessage`, {
+        await fetch(`https://api.telegram.org/bot{masterSettings.token}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

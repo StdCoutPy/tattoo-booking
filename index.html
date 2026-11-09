@@ -133,26 +133,8 @@
     <!-- Подключаем локальный файл Supabase, который мы скачали -->
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
-        <script>
-        // 1. АВТОМАТИЧЕСКИЙ ПЕРЕХВАТ МАСТЕРА ИЗ URL-СТРОКИ
-        // Браузер сам ищет текст после знака ?master=
-        const urlParams = new URLSearchParams(window.location.search);
-        let currentMasterId = urlParams.get('master');
-
-        // Проверяем: если мастер не передан в ссылке, ставим общую заглушку
-        if (!currentMasterId) {
-            currentMasterId = "default_master";
-            console.log("Предупреждение: Мастер не указан в URL. Использован id: default_master");
-        } else {
-            currentMasterId = currentMasterId.trim().toLowerCase();
-            console.log(`Сайт успешно инициализирован под мастера: [${currentMasterId}]`);
-
-            // Хакерская фича: Меняем заголовок студии "INK & GOLD", если хотим кастомизировать под мастера
-            // Для теста можно раскомментировать строчку ниже:
-            // document.querySelector('nav .serif-title').innerText = currentMasterId.toUpperCase();
-        }
-
-        // 2. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
+            <script>
+        // НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
         const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
         const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
@@ -161,11 +143,10 @@
         let selectedDate = "19 Окт";
         let selectedTime = "10:00";
 
-        // 3. ЛОГИКА ИНТЕРАКТИВНОГО КАЛЕНДАРЯ (КЛИКИ)
+        // ЛОГИКА ИНТЕРАКТИВНОГО КАЛЕНДАРЯ (КЛИКИ)
         const dateCards = document.querySelectorAll('#booking .grid-cols-4 > div, #booking .grid-cols-7 > div');
         const timeButtons = document.querySelectorAll('#booking .flex button');
 
-        // Клик по дате
         dateCards.forEach(card => {
             if (card.classList.contains('cursor-not-allowed')) return;
             card.addEventListener('click', () => {
@@ -182,18 +163,17 @@
             });
         });
 
-        // Клик по времени
         timeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 timeButtons.forEach(b => {
                     b.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white";
                 });
                 btn.className = "border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880]";
-                selectedTime = btn.innerText.split(' ')[0].trim();
+                selectedTime = btn.innerText.split('\n')[0].trim();
             });
         });
 
-        // 4. ОТПРАВКА ДАННЫХ В SUPABASE С МЕТКОЙ МАСТЕРА
+        // ЛОГИКА ОТПРАВКИ ФОРМЫ В БАЗУ ДАННЫХ
         const bookingForm = document.querySelector('#booking form');
 
         bookingForm.addEventListener('submit', async (e) => {
@@ -212,19 +192,48 @@
             submitBtn.innerText = "ОТПРАВЛЯЕМ ЗАЯВКУ...";
             submitBtn.disabled = true;
 
-            // 🔥 УМНЫЙ ДИНАМИЧЕСКИЙ PAYLOAD: Добавляем метку master_id
             const payload = {
                 name: nameInput,
                 phone: phoneInput,
                 date: String(selectedDate).trim(),
                 time: String(selectedTime).trim(),
-                note: noteInput,
-                master_id: currentMasterId // Передаем перехваченный из ссылки ID
+                note: noteInput
             };
 
+            try {
+                const response = await fetch(SUPABASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(payload)
+                });
 
+                if (response.ok) {
+                    alert(`Успешно! Спасибо, ${nameInput}. Заявка передана мастеру.`);
+                    bookingForm.reset();
+                    submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
+                    submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";
+                    submitBtn.disabled = false;
+                } else {
+                    const errText = await response.text();
+                    console.error("Отказ базы данных:", errText);
+                    alert("Ошибка базы данных при отправке.");
+                    submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
+                    submitBtn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Сетевая ошибка fetch:", err);
+                alert("Не удалось связаться с сервером.");
+                submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
+                submitBtn.disabled = false;
+            }
         });
     </script>
+
 
 </body>
 </html>

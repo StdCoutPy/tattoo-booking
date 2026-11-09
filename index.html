@@ -134,6 +134,34 @@
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
+                // Справочник контента для каждого мастера (фотографии работ)
+const mastersContent = {
+    "leha_ink": {
+        "title": "Портфолио Алексея (Графика)",
+        "photos": [
+            "https://tattooz.ru/gallery/tattoo/zhenskie/ruka/big/", // Ссылка на 1-е тату Лёхи
+            "https://tattoomall.ru/blog/styles?srsltid=AYCX9vK-iC1LDqmDO2b8_akLBRIiK6yLpuUaFHbP6bdQN4wGcVMt_5cp", // Ссылка на 2-е тату Лёхи
+            "https://artofpain.ru/stati/modnye-tatu-v-2025-godu"  // Ссылка на 3-е тату Лёхи
+        ]
+    },
+    "ilya_tattoo": {
+        "title": "Портфолио Ильи (Реализм)",
+        "photos": [
+            "https://everink.ru/collection/kategoriya-1", // Ссылка на 1-е тату Ильи
+            "https://i.pinimg.com/736x/46/b4/fb/46b4fb18a8ad4fdb1ede80cd11e317f4.jpg", // Ссылка на 2-е тату Ильи
+            "https://arleysign.com/image/posts_images/blog_post_1761064608_257.png"  // Ссылка на 3-е тату Ильи
+        ]
+    },
+    "default_master": {
+        "title": "Портфолио Нашей Студии",
+        "photos": [
+            "https://ibb.co",
+            "https://ibb.co",
+            "https://ibb.co"
+        ]
+    }
+};
+
         // 1. АВТОМАТИЧЕСКИЙ ПЕРЕХВАТ МАСТЕРА ИЗ URL-СТРОКИ
 const urlParams = new URLSearchParams(window.location.search);
 let currentMasterId = urlParams.get('master');
@@ -143,8 +171,24 @@ if (!currentMasterId) {
     console.log("Мастер не указан в URL. Используется: default_master");
 } else {
     currentMasterId = currentMasterId.trim().toLowerCase();
-    console.log(`Сайт успешно инициализирован под мастера: [${currentMasterId}]`);
+    console.log(`Сайт инициализирован под мастера: [${currentMasterId}]`);
+
+    // 🔥 МАГИЯ: Автоматически меняем фото портфолио под конкретного мастера!
+    const content = mastersContent[currentMasterId] || mastersContent["default_master"];
+
+    // 1. Меняем заголовок над галереей
+    const portfolioTitle = document.querySelector('#portfolio h2');
+    if (portfolioTitle) portfolioTitle.innerText = content.title;
+
+    // 2. Находим все теги <img> внутри блока портфолио и меняем им src
+    const portfolioImages = document.querySelectorAll('#portfolio img');
+    portfolioImages.forEach((img, index) => {
+        if (content.photos[index]) {
+            img.src = content.photos[index];
+        }
+    });
 }
+
 
 // 2. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
 const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";

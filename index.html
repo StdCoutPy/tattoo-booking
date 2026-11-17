@@ -134,7 +134,7 @@
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
-               // 1. СПРАВОЧНИК АКТИВНЫХ МАСТЕРОВ (Белый список)
+               // 1. СПРАВОЧНИК АКТИВНЫХ МАСТЕРОВ
 const mastersContent = {
     "leha_ink": {
         "title": "Портфолио Алексея (Графика)",
@@ -154,26 +154,23 @@ const mastersContent = {
     }
 };
 
-// 2. ПРОВЕРКА ДОСТУПА И РЕДИРЕКТ ДЛЯ НЕСУЩЕСТВУЮЩИХ МАСТЕРОВ
+// 2. ПРОВЕРКА ДОСТУПА: ЕСЛИ НЕТ ПАРАМЕТРА ИЛИ МАСТЕРА НЕТ В СПИСКЕ — ПОКАЗЫВАЕМ ТВОЮ ЗАГЛУШКУ
 const urlParams = new URLSearchParams(window.location.search);
 let rawMaster = urlParams.get('master');
 let currentMasterId = rawMaster ? rawMaster.trim().toLowerCase() : null;
 
-// Если параметр есть, но такого мастера НЕТ в списке mastersContent — перекидываем на чистый корень!
-if (currentMasterId && !mastersContent[currentMasterId]) {
-    window.location.replace(window.location.origin + window.location.pathname);
-    throw new Error("Redirecting unknown master to stub page");
-}
+if (!currentMasterId || !mastersContent[currentMasterId]) {
+    // Опционально: очищаем адресную строку до чистого вида https://vercel.app
+    window.history.replaceState({}, document.title, window.location.pathname);
 
-// Если параметра нет вообще (мы на главной странице) — показываем заглушку
-if (!currentMasterId) {
+    // Отрисовываем твою страницу-заглушку
     document.body.innerHTML = `
         <div class="min-h-screen bg-[#0D0D0D] text-white flex flex-col items-center justify-center p-6 text-center font-sans">
             <div class="border border-[#C5A880]/30 bg-[#141414] p-10 max-w-lg w-full shadow-2xl">
                 <p class="text-[#C5A880] text-xs uppercase tracking-[0.3em] mb-4">INK & GOLD • BOOKING SYSTEM</p>
                 <h1 class="text-3xl font-light tracking-wider uppercase mb-4">Платформа онлайн-записи</h1>
                 <p class="text-gray-400 text-sm leading-relaxed mb-8">
-                    Профиль мастера не найден или ссылка недействительна. Для бронирования сеанса используйте актуальную персональную ссылку.
+                    Для бронирования сеанса используйте персональную ссылку вашего тату-мастера.
                 </p>
                 <div class="border-t border-[#262626] pt-6">
                     <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Вы тату-мастер и хотите такую систему?</p>
@@ -185,9 +182,9 @@ if (!currentMasterId) {
             </div>
         </div>
     `;
+    // Останавливаем дальнейшее выполнение скрипта календаря и базы
     throw new Error("Stub page rendered");
 }
-
 
 
 // 3. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE

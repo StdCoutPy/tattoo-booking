@@ -134,23 +134,50 @@
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
-               // 1. ПРОВЕРКА ДОСТУПА: ЕСЛИ НЕТ ПАРАМЕТРА ?master= — ПОКАЗЫВАЕМ ЗАГЛУШКУ
-const urlParams = new URLSearchParams(window.location.search);
-let currentMasterId = urlParams.get('master');
+               // 1. СПРАВОЧНИК АКТИВНЫХ МАСТЕРОВ (Белый список)
+const mastersContent = {
+    "leha_ink": {
+        "title": "Портфолио Алексея (Графика)",
+        "photos": [
+            "https://ibb.co",
+            "https://ibb.co",
+            "https://ibb.co"
+        ]
+    },
+    "ilya_tattoo": {
+        "title": "Портфолио Ильи (Реализм)",
+        "photos": [
+            "https://ibb.co",
+            "https://ibb.co",
+            "https://ibb.co"
+        ]
+    }
+};
 
+// 2. ПРОВЕРКА ДОСТУПА И РЕДИРЕКТ ДЛЯ НЕСУЩЕСТВУЮЩИХ МАСТЕРОВ
+const urlParams = new URLSearchParams(window.location.search);
+let rawMaster = urlParams.get('master');
+let currentMasterId = rawMaster ? rawMaster.trim().toLowerCase() : null;
+
+// Если параметр есть, но такого мастера НЕТ в списке mastersContent — перекидываем на чистый корень!
+if (currentMasterId && !mastersContent[currentMasterId]) {
+    window.location.replace(window.location.origin + window.location.pathname);
+    throw new Error("Redirecting unknown master to stub page");
+}
+
+// Если параметра нет вообще (мы на главной странице) — показываем заглушку
 if (!currentMasterId) {
-    // Полностью заменяем экран на премиальную страницу-заглушку платформы
     document.body.innerHTML = `
         <div class="min-h-screen bg-[#0D0D0D] text-white flex flex-col items-center justify-center p-6 text-center font-sans">
             <div class="border border-[#C5A880]/30 bg-[#141414] p-10 max-w-lg w-full shadow-2xl">
                 <p class="text-[#C5A880] text-xs uppercase tracking-[0.3em] mb-4">INK & GOLD • BOOKING SYSTEM</p>
                 <h1 class="text-3xl font-light tracking-wider uppercase mb-4">Платформа онлайн-записи</h1>
                 <p class="text-gray-400 text-sm leading-relaxed mb-8">
-                    Для бронирования сеанса используйте персональную ссылку вашего тату-мастера.
+                    Профиль мастера не найден или ссылка недействительна. Для бронирования сеанса используйте актуальную персональную ссылку.
                 </p>
                 <div class="border-t border-[#262626] pt-6">
                     <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Вы тату-мастер и хотите такую систему?</p>
-                    <a href="https://t.me/+79319585862" target="_blank"
+                    <a href="https://t.me" target="_blank"
                        class="inline-block bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 hover:bg-[#d4b890] transition-all">
                         Подключить свой профиль
                     </a>
@@ -158,14 +185,12 @@ if (!currentMasterId) {
             </div>
         </div>
     `;
-    // Останавливаем дальнейшее выполнение скрипта календаря и базы
     throw new Error("Stub page rendered");
-} else {
-    currentMasterId = currentMasterId.trim().toLowerCase();
 }
 
 
-// 2. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
+
+// 3. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
 const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
 const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
@@ -180,7 +205,7 @@ const mastersContent = {
     "default_master": { "title": "Портфолио Нашей Студии", "photos": ["https://ibb.co", "https://ibb.co", "https://ibb.co"] }
 };
 
-// 3. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ КАЛЕНДАРЯ НА НЕДЕЛЮ ВПЕРЕД
+// 4. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ КАЛЕНДАРЯ НА НЕДЕЛЮ ВПЕРЕД
 function initDynamicCalendar(bookedSlots) {
     const calendarContainer = document.querySelector('#booking .grid-cols-4, #booking .grid-cols-7');
     if (!calendarContainer) return;
@@ -225,7 +250,7 @@ function initDynamicCalendar(bookedSlots) {
     }
 }
 
-// 4. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ ЧАСОВЫХ СЛОТОВ (КАЖДЫЙ ЧАС) С ПРОВЕРКОЙ ЗАНЯТОСТИ
+// 5. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ ЧАСОВЫХ СЛОТОВ (КАЖДЫЙ ЧАС) С ПРОВЕРКОЙ ЗАНЯТОСТИ
 function renderTimeSlots(dateStr, bookedSlots) {
     const timeContainer = document.querySelector('#booking .flex.flex-wrap') || document.querySelector('#booking .flex');
     if (!timeContainer) return;
@@ -266,7 +291,7 @@ function renderTimeSlots(dateStr, bookedSlots) {
     }
 }
 
-// 5. ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ ИЗ SUPABASE ПРИ ОТКРЫТИИ СТРАНИЦЫ
+// 6. ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ ИЗ SUPABASE ПРИ ОТКРЫТИИ СТРАНИЦЫ
 async function loadBookings() {
     try {
         // Скачиваем из базы данных только актуальные даты и время занятых слотов этого мастера
@@ -308,7 +333,7 @@ async function loadBookings() {
 // Запускаем сборку данных при загрузке страницы
 loadBookings();
 
-// 6. ЛОГИКА ОТПРАВКИ ФОРМЫ
+// 7. ЛОГИКА ОТПРАВКИ ФОРМЫ
 const bookingForm = document.querySelector('#booking form');
 bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();

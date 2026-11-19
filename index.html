@@ -135,37 +135,20 @@
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
                // 1. СПРАВОЧНИК АКТИВНЫХ МАСТЕРОВ
-const mastersContent = {
-    "leha_ink": {
-        "title": "Портфолио Алексея (Графика)",
-        "photos": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s.jpg",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s.jpg",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s.jpg",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s.jpg"
-        ]
-    },
-    "ilya_tattoo": {
-        "title": "Портфолио Ильи (Реализм)",
-        "photos": [
-            "https://www.worldfamoustattooink.com/cdn/shop/files/ILYA-FOMINYKH.jpg?v=1689832861",
-            "https://www.tattoolife.com/wp-content/uploads/2025/03/Tattoo-by-Ilya-Frame-@ilyaframetattoo-6.jpeg",
-            "https://www.tattoolife.com/wp-content/uploads/2025/03/Tattoo-by-Ilya-Frame-@ilyaframetattoo-4.jpeg",
-            "https://www.tattoolife.com/wp-content/uploads/2025/03/Tattoo-by-Ilya-Frame-@ilyaframetattoo-1.jpeg"
-        ]
-    }
-};
+// 1. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
+const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
+const BOOKINGS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
+const MASTERS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/masters`;
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
 
-// 2. ПРОВЕРКА ДОСТУПА: ЕСЛИ НЕТ ПАРАМЕТРА ИЛИ МАСТЕРА НЕТ В СПИСКЕ — ПОКАЗЫВАЕМ ТВОЮ ЗАГЛУШКУ
+// 2. ПРОВЕРКА ПАРАМЕТРА В ССЫЛКЕ
 const urlParams = new URLSearchParams(window.location.search);
 let rawMaster = urlParams.get('master');
 let currentMasterId = rawMaster ? rawMaster.trim().toLowerCase() : null;
 
-if (!currentMasterId || !mastersContent[currentMasterId]) {
-    // Опционально: очищаем адресную строку до чистого вида https://vercel.app
+// Функция отрисовки заглушки
+function renderStubPage() {
     window.history.replaceState({}, document.title, window.location.pathname);
-
-    // Отрисовываем твою страницу-заглушку
     document.body.innerHTML = `
         <div class="min-h-screen bg-[#0D0D0D] text-white flex flex-col items-center justify-center p-6 text-center font-sans">
             <div class="border border-[#C5A880]/30 bg-[#141414] p-10 max-w-lg w-full shadow-2xl">
@@ -176,7 +159,7 @@ if (!currentMasterId || !mastersContent[currentMasterId]) {
                 </p>
                 <div class="border-t border-[#262626] pt-6">
                     <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Вы тату-мастер и хотите такую систему?</p>
-                    <a href="https://t.me/+79319585862" target="_blank"
+                    <a href="https://t.me" target="_blank"
                        class="inline-block bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 hover:bg-[#d4b890] transition-all">
                         Подключить свой профиль
                     </a>
@@ -184,22 +167,22 @@ if (!currentMasterId || !mastersContent[currentMasterId]) {
             </div>
         </div>
     `;
-    // Останавливаем дальнейшее выполнение скрипта календаря и базы
-    throw new Error("Stub page rendered");
+}
+
+// Если параметра нет сразу — показываем заглушку
+if (!currentMasterId) {
+    renderStubPage();
+    throw new Error("No master ID provided");
 }
 
 
-// 3. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
-const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
-const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
-
-let selectedDate = "";
-let selectedTime = "";
 
 
 
 // 4. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ КАЛЕНДАРЯ НА НЕДЕЛЮ ВПЕРЕД
+let selectedDate = "";
+let selectedTime = "";
+
 function initDynamicCalendar(bookedSlots) {
     const calendarContainer = document.querySelector('#booking .grid-cols-4, #booking .grid-cols-7');
     if (!calendarContainer) return;
@@ -288,41 +271,47 @@ function renderTimeSlots(dateStr, bookedSlots) {
 // 6. ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ ИЗ SUPABASE ПРИ ОТКРЫТИИ СТРАНИЦЫ
 async function loadBookings() {
     try {
-        // Скачиваем из базы данных только актуальные даты и время занятых слотов этого мастера
-        const response = await fetch(`${SUPABASE_URL}?master_id=eq.${currentMasterId}&select=date,time`, {
-            method: 'GET',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
+        // Сначала проверяем, существует ли мастер в таблице masters
+        const masterRes = await fetch(`${MASTERS_URL}?id=eq.${currentMasterId}&select=*`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
+        const masters = masterRes.ok ? await masterRes.json() : [];
 
-        const bookedSlots = response.ok ? await response.json() : [];
+        // Если мастера нет в БД — показываем заглушку!
+        if (!masters || masters.length === 0) {
+            renderStubPage();
+            return;
+        }
 
-        // Инициализируем календарь со справочником занятых окон
-        initDynamicCalendar(bookedSlots);
+        const masterData = masters[0];
 
-        // Обновляем визуальный контент портфолио
-        const content = mastersContent[currentMasterId] || mastersContent["default_master"];
+        // Обновляем заголовок и фото портфолио прямо из базы данных
         const portfolioTitle = document.querySelector('h2');
-        if (portfolioTitle) portfolioTitle.innerText = content.title;
+        if (portfolioTitle) portfolioTitle.innerText = masterData.name;
 
         const allImages = document.querySelectorAll('img');
         let photoIndex = 0;
         allImages.forEach((img) => {
             if (img.src.includes('logo') || img.src.includes('icon')) return;
-            if (content.photos[photoIndex]) {
-                img.src = content.photos[photoIndex];
+            if (masterData.photos && masterData.photos[photoIndex]) {
+                img.src = masterData.photos[photoIndex];
                 img.removeAttribute('srcset');
                 photoIndex++;
             }
         });
 
+        // Далее загружаем занятые слоты расписания (твой старый код)
+        const response = await fetch(`${BOOKINGS_URL}?master_id=eq.${currentMasterId}&select=date,time`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const bookedSlots = response.ok ? await response.json() : [];
+        initDynamicCalendar(bookedSlots);
+
     } catch (err) {
-        console.error("Ошибка загрузки занятых слотов:", err);
-        initDynamicCalendar([]); // В случае сбоя сети выводим пустой календарь
+        console.error("Ошибка загрузки профиля:", err);
     }
 }
+
 
 // Запускаем сборку данных при загрузке страницы
 loadBookings();

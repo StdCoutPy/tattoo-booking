@@ -344,7 +344,7 @@ bookingForm.addEventListener('submit', async (e) => {
     };
 
     try {
-        const response = await fetch(SUPABASE_URL, {
+        const response = await fetch(BOOKINGS_URL, {
             method: 'POST',
             headers: {
                 'apikey': SUPABASE_KEY,

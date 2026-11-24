@@ -20,7 +20,7 @@
 
     <!-- 1. НАВИГАЦИЯ -->
     <nav class="border-b border-[#2C2C2C] bg-[#181818]/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center max-w-7xl mx-auto">
-        <div class="serif-title text-2xl font-bold tracking-widest text-[#C5A880]">INK & GOLD</div>
+        <div id="company-logo" class="serif-title text-2xl font-bold tracking-widest text-[#C5A880]">INK & GOLD</div>
         <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest text-gray-400">
             <a href="#gallery" class="hover:text-[#C5A880] transition">Галерея</a>
             <a href="#masters" class="hover:text-[#C5A880] transition">Мастера</a>
@@ -57,7 +57,7 @@
     <!-- 3. ГАЛЕРЕЯ РАБОТ -->
     <section id="gallery" class="max-w-7xl mx-auto px-6 py-20 border-b border-[#2C2C2C]">
         <div class="text-center space-y-4 mb-16">
-            <h2 class="serif-title text-4xl md:text-5xl font-light text-white">Портфолио Студии</h2>
+            <h2  id="portfolio-title" class="serif-title text-4xl md:text-5xl font-light text-white">Портфолио Студии</h2>
             <p class="text-xs uppercase tracking-widest text-[#C5A880]">Нажмите на фото, чтобы рассмотреть детали</p>
         </div>
         <!-- Сетка галереи -->
@@ -128,254 +128,253 @@
 
     <!-- ПОДВАЛ (FOOTER) -->
     <footer class="border-t border-[#2C2C2C] py-8 text-center text-xs text-gray-500 tracking-wider">
-        © 2026 INK & GOLD. Разработано специально для демонстрации автозаписи.
+        © 2026 <span id="footer-company">INK & GOLD</span>. Разработано специально для демонстрации автозаписи.
     </footer>
     <!-- Подключаем локальный файл Supabase, который мы скачали -->
     <!-- Стало: -->
         <!-- Внешние скрипты больше НЕ НУЖНЫ, библиотеку Supabase удалили -->
             <script>
-               // 1. СПРАВОЧНИК АКТИВНЫХ МАСТЕРОВ
-// 1. НАСТРОЙКА ПОДКЛЮЧЕНИЯ К SUPABASE
+                // 1. НАСТРОЙКИ SUPABASE
 const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
 const BOOKINGS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
 const MASTERS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/masters`;
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
 
-// 2. ПРОВЕРКА ПАРАМЕТРА В ССЫЛКЕ
+// 2. ПОЛУЧАЕМ ID МАСТЕРА ИЗ URL
 const urlParams = new URLSearchParams(window.location.search);
-let rawMaster = urlParams.get('master');
-let currentMasterId = rawMaster ? rawMaster.trim().toLowerCase() : null;
+const rawMaster = urlParams.get('master');
+const currentMasterId = rawMaster ? rawMaster.trim().toLowerCase() : null;
 
-// Функция отрисовки заглушки
+// Заглушка, если зашли без ?master=...
 function renderStubPage() {
-    window.history.replaceState({}, document.title, window.location.pathname);
-    document.body.innerHTML = `
-        <div class="min-h-screen bg-[#0D0D0D] text-white flex flex-col items-center justify-center p-6 text-center font-sans">
-            <div class="border border-[#C5A880]/30 bg-[#141414] p-10 max-w-lg w-full shadow-2xl">
-                <p class="text-[#C5A880] text-xs uppercase tracking-[0.3em] mb-4">INK & GOLD • BOOKING SYSTEM</p>
-                <h1 class="text-3xl font-light tracking-wider uppercase mb-4">Платформа онлайн-записи</h1>
-                <p class="text-gray-400 text-sm leading-relaxed mb-8">
-                    Для бронирования сеанса используйте персональную ссылку вашего тату-мастера.
-                </p>
-                <div class="border-t border-[#262626] pt-6">
-                    <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Вы тату-мастер и хотите такую систему?</p>
-                    <a href="https://t.me" target="_blank"
-                       class="inline-block bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 hover:bg-[#d4b890] transition-all">
-                        Подключить свой профиль
-                    </a>
-                </div>
-            </div>
+  history.replaceState({}, document.title, window.location.pathname);
+  document.body.innerHTML = `
+    <div class="min-h-screen bg-[#0D0D0D] text-white flex flex-col items-center justify-center p-6 font-sans">
+      <div class="border border-[#C5A880]/30 bg-[#141414] p-10 max-w-lg w-full shadow-2xl text-center">
+        <p class="text-[#C5A880] text-xs uppercase tracking-[0.3em] mb-4">TATTOO BOOKING SYSTEM</p>
+        <h1 class="text-3xl font-light mb-4">Персональная страница мастера</h1>
+        <p class="text-gray-400 text-sm leading-relaxed mb-6">
+          Для просмотра портфолио и записи на сеанс перейдите по персональной ссылке вашего тату-мастера.
+        </p>
+        <div class="pt-6 border-t border-white/10">
+          <a href="https://t.me" target="_blank" class="inline-block bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 hover:bg-[#d4b890] transition">
+            Связаться с поддержкой
+          </a>
         </div>
-    `;
+      </div>
+    </div>
+  `;
 }
 
-// Если параметра нет сразу — показываем заглушку
 if (!currentMasterId) {
-    renderStubPage();
-    throw new Error("No master ID provided");
+  renderStubPage();
+  throw new Error("No master ID provided");
 }
 
-
-
-
-
-// 4. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ КАЛЕНДАРЯ НА НЕДЕЛЮ ВПЕРЕД
+// 3. ДИНАМИЧЕСКИЙ КАЛЕНДАРЬ И СЛОТЫ
 let selectedDate = "";
-let selectedTime = "";
+let selectedTime = "10:00";
 
-function initDynamicCalendar(bookedSlots) {
-    const calendarContainer = document.querySelector('#booking .grid-cols-4, #booking .grid-cols-7');
-    if (!calendarContainer) return;
+function initDynamicCalendar(bookedSlots = []) {
+  const dateContainer = document.querySelector('#booking .grid-cols-4');
+  const timeContainer = document.querySelector('#booking .flex-wrap');
+  if (!dateContainer || !timeContainer) return;
 
-    calendarContainer.innerHTML = ""; // Очищаем старые статические дни
+  dateContainer.innerHTML = '';
+  const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
 
-    const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+  function renderTimeSlots(dateStr) {
+    timeContainer.innerHTML = '';
+    const times = ['10:00', '14:00', '18:00'];
+    const labels = ['10:00 (Утро)', '14:00 (День)', '18:00 (Вечер)'];
+    let firstAvailable = null;
 
-    // Генерируем 7 дней начиная с сегодняшнего
-    for (let i = 0; i < 7; i++) {
-        const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() + i);
+    times.forEach((timeVal, idx) => {
+      const isBooked = bookedSlots.some(slot => slot.date === dateStr && slot.time && slot.time.startsWith(timeVal));
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.innerText = isBooked ? `${timeVal} (Занято)` : labels[idx];
 
-        const dayName = daysOfWeek[targetDate.getDay()];
-        const dayNum = targetDate.getDate();
-        const monthName = months[targetDate.getMonth()];
+      if (isBooked) {
+        btn.className = "border border-[#3A3A3A] text-gray-600 px-4 py-2 text-xs uppercase tracking-wider cursor-not-allowed line-through";
+        btn.disabled = true;
+      } else {
+        if (!firstAvailable) firstAvailable = timeVal;
+        const isSelected = (firstAvailable === timeVal);
+        if (isSelected) selectedTime = timeVal;
 
-        const dateString = `${dayNum} ${monthName}`;
+        btn.className = isSelected
+          ? "border border-[#C5A880] bg-[#C5A880]/10 text-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider transition"
+          : "border border-[#3A3A3A] hover:border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider transition text-gray-300";
 
-        const dayCard = document.createElement('div');
-        dayCard.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer text-center transition-all";
-        dayCard.innerHTML = `<span class="block text-xs text-gray-500">${dayName}</span>${dateString}`;
-
-        // Клик по дню
-        dayCard.addEventListener('click', () => {
-            document.querySelectorAll('#booking .grid-cols-4 > div, #booking .grid-cols-7 > div').forEach(c => {
-                c.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer text-center";
-                if(c.querySelector('span')) c.querySelector('span').className = "block text-xs text-gray-500";
-            });
-            dayCard.className = "border border-[#C5A880] bg-[#C5A880] text-black p-3 text-sm cursor-pointer text-center font-bold";
-            if(dayCard.querySelector('span')) dayCard.querySelector('span').className = "block text-xs text-gray-900";
-
-            selectedDate = dateString;
-            renderTimeSlots(dateString, bookedSlots); // Перерисовываем часы под выбранный день!
+        btn.addEventListener('click', () => {
+          selectedTime = timeVal;
+          timeContainer.querySelectorAll('button:not(:disabled)').forEach(b => {
+            b.className = "border border-[#3A3A3A] hover:border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider transition text-gray-300";
+          });
+          btn.className = "border border-[#C5A880] bg-[#C5A880]/10 text-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider transition";
         });
+      }
+      timeContainer.appendChild(btn);
+    });
+  }
 
-        calendarContainer.appendChild(dayCard);
+  for (let i = 0; i < 7; i++) {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + i);
+    const dayName = daysOfWeek[targetDate.getDay()];
+    const dayNum = targetDate.getDate();
+    const monthName = months[targetDate.getMonth()];
+    const dateStr = `${dayNum} ${monthName}`;
 
-        // Автокликаем на первый (сегодняшний) день для инициализации
-        if (i === 0) dayCard.click();
-    }
+    const card = document.createElement('div');
+    const isFirst = (i === 0);
+    if (isFirst) selectedDate = dateStr;
+
+    card.className = isFirst
+      ? "border border-[#C5A880] bg-[#C5A880] text-black font-bold p-3 text-sm cursor-pointer transition"
+      : "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer transition";
+
+    card.innerHTML = `<span class="block text-xs ${isFirst ? 'text-gray-900' : 'text-gray-500'}">${dayName}</span>${dateStr}`;
+
+    card.addEventListener('click', () => {
+      selectedDate = dateStr;
+      dateContainer.querySelectorAll('div').forEach(c => {
+        c.className = "border border-[#3A3A3A] hover:border-[#C5A880] p-3 text-sm cursor-pointer transition";
+        const sp = c.querySelector('span');
+        if (sp) sp.className = "block text-xs text-gray-500";
+      });
+      card.className = "border border-[#C5A880] bg-[#C5A880] text-black font-bold p-3 text-sm cursor-pointer transition";
+      const activeSp = card.querySelector('span');
+      if (activeSp) activeSp.className = "block text-xs text-gray-900";
+      renderTimeSlots(dateStr);
+    });
+
+    dateContainer.appendChild(card);
+  }
+
+  renderTimeSlots(selectedDate);
 }
 
-// 5. ДИНАМИЧЕСКАЯ ГЕНЕРАЦИЯ ЧАСОВЫХ СЛОТОВ (КАЖДЫЙ ЧАС) С ПРОВЕРКОЙ ЗАНЯТОСТИ
-function renderTimeSlots(dateStr, bookedSlots) {
-    const timeContainer = document.querySelector('#booking .flex.flex-wrap') || document.querySelector('#booking .flex');
-    if (!timeContainer) return;
+// 4. ЗАГРУЗКА ДАННЫХ МАСТЕРА, КОМПАНИИ И ЗАНЯТЫХ СЛОТОВ
+async function loadPageData() {
+  try {
+    const masterRes = await fetch(`${MASTERS_URL}?id=eq.${currentMasterId}&select=*`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const masters = masterRes.ok ? await masterRes.json() : [];
 
-    timeContainer.innerHTML = ""; // Очищаем старые кнопки часов
-    timeContainer.className = "flex flex-wrap gap-2 mt-2"; // Корректируем стили под сетку
+    if (!masters || masters.length === 0) {
+      renderStubPage();
+      return;
+    }
 
-    // Генерируем каждый час с 10:00 до 20:00
-    for (let hour = 10; hour <= 20; hour++) {
-        const timeStr = `${hour}:00`;
+    const masterData = masters[0];
 
-        // Проверяем, занят ли этот слот у текущего мастера в эту дату
-        const isBooked = bookedSlots.some(slot => slot.date === dateStr && slot.time === timeStr);
+    // ПОДСТАВЛЯЕМ НАЗВАНИЕ КОМПАНИИ ВМЕСТО INK & GOLD
+    if (masterData.company_name) {
+      const logoEl = document.getElementById('company-logo') || document.querySelector('nav .serif-title');
+      const footerEl = document.getElementById('footer-company');
+      if (logoEl) logoEl.textContent = masterData.company_name;
+      if (footerEl) footerEl.textContent = masterData.company_name;
+      document.title = `${masterData.company_name} — Запись на сеанс`;
+    }
 
-        const btn = document.createElement('button');
-        btn.type = "button";
+    // ПОДСТАВЛЯЕМ ИМЯ МАСТЕРА В ЗАГОЛОВОК ПОРТФОЛИО
+    const portfolioTitle = document.getElementById('portfolio-title') || document.querySelector('#gallery h2');
+    if (portfolioTitle) {
+      if (masterData.master_name) {
+        portfolioTitle.textContent = `Портфолио: ${masterData.master_name}`;
+      } else if (masterData.name) {
+        portfolioTitle.textContent = masterData.name;
+      }
+    }
 
-        if (isBooked) {
-            // Если занято — делаем кнопку серой и некликбельной
-            btn.className = "border border-red-900/30 bg-red-950/10 text-gray-600 px-4 py-2 text-xs uppercase tracking-wider cursor-not-allowed";
-            btn.innerText = `${timeStr} (Занято)`;
-            btn.disabled = true;
-        } else {
-            // Если свободно — обычная стильная кнопка
-            btn.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white transition-all";
-            btn.innerText = timeStr;
-
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#booking button[type="button"]').forEach(b => {
-                    if(!b.disabled) b.className = "border border-[#3A3A3A] hover:border-white px-4 py-2 text-xs uppercase tracking-wider text-gray-400 hover:text-white";
-                });
-                btn.className = "border border-[#C5A880] px-4 py-2 text-xs uppercase tracking-wider bg-[#C5A880]/10 text-[#C5A880] font-bold";
-                selectedTime = timeStr;
-            });
+    // Подставляем фото работ мастера из БД
+    if (masterData.photos && Array.isArray(masterData.photos) && masterData.photos.length > 0) {
+      const galleryImages = document.querySelectorAll('#gallery img');
+      galleryImages.forEach((img, idx) => {
+        if (masterData.photos[idx]) {
+          img.src = masterData.photos[idx];
+          img.removeAttribute('srcset');
         }
-
-        timeContainer.appendChild(btn);
+      });
     }
+
+    // Загружаем занятые слоты
+    const bookingsRes = await fetch(`${BOOKINGS_URL}?master_id=eq.${currentMasterId}&select=date,time`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const bookedSlots = bookingsRes.ok ? await bookingsRes.json() : [];
+    initDynamicCalendar(bookedSlots);
+
+  } catch (err) {
+    console.error("Ошибка загрузки данных:", err);
+    initDynamicCalendar([]);
+  }
 }
 
-// 6. ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ ИЗ SUPABASE ПРИ ОТКРЫТИИ СТРАНИЦЫ
-async function loadBookings() {
-    try {
-        // Сначала проверяем, существует ли мастер в таблице masters
-        const masterRes = await fetch(`${MASTERS_URL}?id=eq.${currentMasterId}&select=*`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        const masters = masterRes.ok ? await masterRes.json() : [];
-
-        // Если мастера нет в БД — показываем заглушку!
-        if (!masters || masters.length === 0) {
-            renderStubPage();
-            return;
-        }
-
-        const masterData = masters[0];
-
-        // Обновляем заголовок и фото портфолио прямо из базы данных
-        const portfolioTitle = document.querySelector('h2');
-        if (portfolioTitle) portfolioTitle.innerText = masterData.name;
-
-        const allImages = document.querySelectorAll('img');
-        let photoIndex = 0;
-        allImages.forEach((img) => {
-            if (img.src.includes('logo') || img.src.includes('icon')) return;
-            if (masterData.photos && masterData.photos[photoIndex]) {
-                img.src = masterData.photos[photoIndex];
-                img.removeAttribute('srcset');
-                photoIndex++;
-            }
-        });
-
-        // Далее загружаем занятые слоты расписания (твой старый код)
-        const response = await fetch(`${BOOKINGS_URL}?master_id=eq.${currentMasterId}&select=date,time`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        const bookedSlots = response.ok ? await response.json() : [];
-        initDynamicCalendar(bookedSlots);
-
-    } catch (err) {
-        console.error("Ошибка загрузки профиля:", err);
-    }
-}
-
-
-// Запускаем сборку данных при загрузке страницы
-loadBookings();
-
-// 7. ЛОГИКА ОТПРАВКИ ФОРМЫ
+// 5. ОТПРАВКА ФОРМЫ ЗАПИСИ
 const bookingForm = document.querySelector('#booking form');
-bookingForm.addEventListener('submit', async (e) => {
+if (bookingForm) {
+  bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const nameInput = bookingForm.querySelector('input[type="text"]').value.trim();
     const phoneInput = bookingForm.querySelector('input[type="tel"]').value.trim();
-    const noteInput = bookingForm.querySelector('textarea').value.trim();
+    const noteInput = bookingForm.querySelector('textarea') ? bookingForm.querySelector('textarea').value.trim() : "";
 
-    if (!nameInput || !phoneInput || !selectedDate || !selectedTime) {
-        alert("Пожалуйста, заполните все поля и выберите Дату и Время сеанса.");
-        return;
+    if (!nameInput || !phoneInput) {
+      alert("Пожалуйста, укажите ваше имя и телефон.");
+      return;
     }
 
     const submitBtn = bookingForm.querySelector('button[type="submit"]');
-    submitBtn.innerText = "ОТПРАВЛЯЕМ ЗАЯВКУ...";
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "Отправка...";
     submitBtn.disabled = true;
 
     const payload = {
-        name: nameInput,
-        phone: phoneInput,
-        date: String(selectedDate).trim(),
-        time: String(selectedTime).trim(),
-        note: noteInput,
-        master_id: currentMasterId
+      name: nameInput,
+      phone: phoneInput,
+      date: selectedDate,
+      time: selectedTime,
+      note: noteInput,
+      master_id: currentMasterId
     };
 
     try {
-        const response = await fetch(BOOKINGS_URL, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(payload)
-        });
+      const response = await fetch(BOOKINGS_URL, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
 
-        if (response.ok) {
-            alert(`Успешно записано! Дата: ${selectedDate}, Время: ${selectedTime}.`);
-            bookingForm.reset();
-            submitBtn.innerText = "УСПЕШНО ЗАПИСАНО";
-            submitBtn.className = "w-full bg-green-600 text-white font-semibold text-xs uppercase tracking-[0.2em] py-4";
-            submitBtn.disabled = false;
-            loadBookings(); // Перезагружаем календарь, чтобы только что занятый слот сразу стал красным!
-        } else {
-            submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
-            submitBtn.disabled = false;
-            alert("Ошибка сохранения записи.");
-        }
+      if (response.ok) {
+        alert(`Спасибо, ${nameInput}! Заявка отправлена. Мы свяжемся с вами в ближайшее время.`);
+        bookingForm.reset();
+        loadPageData();
+      } else {
+        alert("Ошибка при отправке заявки. Попробуйте еще раз.");
+      }
     } catch (err) {
-        submitBtn.innerText = "ОТПРАВИТЬ ЗАЯВКУ МАСТЕРУ";
-        submitBtn.disabled = false;
-        alert("Ошибка сети.");
+      console.error(err);
+      alert("Ошибка соединения с сервером.");
+    } finally {
+      submitBtn.innerText = originalBtnText;
+      submitBtn.disabled = false;
     }
-});
+  });
+}
 
-
-    </script>
+// Запуск при загрузке страницы
+loadPageData();
+            </script>
 
 
 </body>

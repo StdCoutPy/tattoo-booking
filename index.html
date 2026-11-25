@@ -139,11 +139,11 @@ const YC_PROXY_URL = "https://functions.yandexcloud.net/d4ephj2bind93f5othj7";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
 
 // Единая функция для запросов к Supabase через Yandex Cloud
+// Стало (без заголовка Authorization, чтобы Яндекс не ругался 403):
 function supabaseFetch(path, options = {}) {
   const url = `${YC_PROXY_URL}?target=${encodeURIComponent(path)}`;
   const headers = {
     'apikey': SUPABASE_KEY,
-    'Authorization': `Bearer ${SUPABASE_KEY}`,
     ...(options.headers || {})
   };
   return fetch(url, { ...options, headers });

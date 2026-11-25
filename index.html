@@ -136,8 +136,15 @@
             <script>
                 // 1. НАСТРОЙКИ SUPABASE
 const SUPABASE_PROJECT_ID = "wbmyfiuhgsylloypajcl";
-const BOOKINGS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
-const MASTERS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/masters`;
+// Было:
+// const BOOKINGS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/bookings`;
+// const MASTERS_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/masters`;
+
+// Стало (через бесплатный Cloudflare Worker):
+const PROXY_URL = "https://workers.dev";
+const BOOKINGS_URL = `${PROXY_URL}/rest/v1/bookings`;
+const MASTERS_URL = `${PROXY_URL}/rest/v1/masters`;
+
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
 
 // 2. ПОЛУЧАЕМ ID МАСТЕРА ИЗ URL

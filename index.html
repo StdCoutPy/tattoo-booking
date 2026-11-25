@@ -50,7 +50,7 @@
         <!-- Заглушка под сочное черно-белое фото мастера или процесса -->
         <div class="flex-1 w-full aspect-[4/5] bg-[#222222] border border-[#2C2C2C] relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent z-10"></div>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s" alt="Tattoo Process" class="w-full h-full object-cover grayscale opacity-60 group-hover:scale-105 transition duration-700">
+            <img id="master-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv2VI9LSctawDwA-0H5I8PC07PfDnXO_7v5t5yvAC20w&s" alt="Фото мастера" class="w-full h-full object-cover grayscale opacity-60 group-hover:scale-105 transition duration-700">
         </div>
     </section>
 
@@ -293,14 +293,23 @@ async function loadPageData() {
 
     // Подставляем фото работ мастера из БД
     if (masterData.photos && Array.isArray(masterData.photos) && masterData.photos.length > 0) {
-      const galleryImages = document.querySelectorAll('#gallery img');
-      galleryImages.forEach((img, idx) => {
-        if (masterData.photos[idx]) {
-          img.src = masterData.photos[idx];
-          img.removeAttribute('srcset');
-        }
-      });
+  // 1. Первое фото (индекс 0) ставим как фото мастера на главный экран
+  const heroImg = document.getElementById('master-photo');
+  if (heroImg && masterData.photos[0]) {
+    heroImg.src = masterData.photos[0];
+  }
+
+  // 2. Остальные фото (начиная с индекса 1) ставим в галерею работ
+  const galleryImages = document.querySelectorAll('#gallery img');
+  galleryImages.forEach((img, idx) => {
+    const workPhoto = masterData.photos[idx + 1]; // сдвиг на 1, чтобы не дублировать аватар
+    if (workPhoto) {
+      img.src = workPhoto;
+      img.removeAttribute('srcset');
     }
+  });
+}
+
 
     // Загружаем занятые слоты
     const bookingsRes = await fetch(`${BOOKINGS_URL}?master_id=eq.${currentMasterId}&select=date,time`, {

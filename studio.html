@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор мастера — Онлайн-запись</title>
+    <script src="tailwind.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .serif-title { font-family: Georgia, 'Times New Roman', serif; }
+    </style>
+</head>
+<body class="bg-[#181818] text-[#E0E0E0] min-h-screen flex flex-col justify-between selection:bg-[#C5A880] selection:text-black">
+
+    <!-- ШАПКА СТУДИИ -->
+    <header class="border-b border-[#2C2C2C] bg-[#181818]/90 backdrop-blur-md sticky top-0 z-50 px-6 py-5">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div id="studio-name" class="serif-title text-2xl font-bold tracking-widest text-[#C5A880]">ЗАГРУЗКА...</div>
+            <span class="text-xs uppercase tracking-widest text-gray-400">Онлайн-запись</span>
+        </div>
+    </header>
+
+    <!-- СЕТКА МАСТЕРОВ -->
+    <main class="max-w-5xl mx-auto w-full px-6 py-14 flex-1">
+        <div class="text-center space-y-3 mb-12">
+            <span class="text-xs uppercase tracking-[0.3em] text-[#C5A880]">Команда студии</span>
+            <h1 class="serif-title text-4xl md:text-5xl font-light text-white">Выберите вашего мастера</h1>
+            <p class="text-sm text-gray-400 font-light max-w-md mx-auto">
+                Нажмите на карточку мастера, чтобы посмотреть его портфолио и выбрать свободное время для сеанса.
+            </p>
+        </div>
+
+        <!-- Контейнер для карточек (заполняется скриптом) -->
+        <div id="masters-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div class="col-span-full text-center text-gray-500 py-12 text-sm uppercase tracking-widest">
+                Загружаем список мастеров...
+            </div>
+        </div>
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer class="border-t border-[#2C2C2C] py-6 text-center text-xs text-gray-500">
+        © 2026 <span id="footer-studio">STUDIO</span>. Система онлайн-записи.
+    </footer>
+
+    <script>
+        const YC_PROXY_URL = "https://yandexcloud.net";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndibXlmaXVoZ3N5bGxveXBhamNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MjQyODUsImV4cCI6MjEwNzUwMDI4NX0.vF--Nsc9TqD4C-EV8tNvpiweKhG7AMdKr4CLtFfbzH8";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const rawStudio = urlParams.get('studio');
+        const studioSlug = rawStudio ? rawStudio.trim().toLowerCase() : null;
+
+        async function loadStudioMasters() {
+            const grid = document.getElementById('masters-grid');
+
+            if (!studioSlug) {
+                grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">Не указана ссылка на студию.</div>`;
+                return;
+            }
+
+            try {
+                const path = `/rest/v1/masters?studio_slug=eq.${studioSlug}&select=*`;
+                const res = await fetch(`${YC_PROXY_URL}?target=${encodeURIComponent(path)}`, {
+                    headers: { 'apikey': SUPABASE_KEY }
+                });
+                const masters = res.ok ? await res.json() : [];
+
+                if (!masters || masters.length === 0) {
+                    document.getElementById('studio-name').textContent = "СТУДИЯ НЕ НАЙДЕНА";
+                    grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">В этой студии пока нет активных мастеров.</div>`;
+                    return;
+                }
+
+                // Берем название компании из первой записи мастера этой студии
+                const companyTitle = masters.company_name || "ТАТУ-СТУДИЯ";
+                document.getElementById('studio-name').textContent = companyTitle;
+                document.getElementById('footer-studio').textContent = companyTitle;
+                document.title = `${companyTitle} — Выберите мастера`;
+
+                grid.innerHTML = '';
+
+                masters.forEach(master => {
+                    const displayName = master.master_name || master.name || master.id;
+                    const specialty = master.specialty || "Тату-мастер";
+                    // Первое фото из массива photos используется как аватар мастера
+                    const avatar = (master.photos && master.photos.length > 0)
+                        ? master.photos
+                        : "data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 100 100'><rect fill='%23222' width='100' height='100'/></svg>";
+
+                    // Ссылка на личную страницу записи мастера (index.html?master=...)
+                    const bookingUrl = `./?master=${encodeURIComponent(master.id)}`;
+
+                    const card = document.createElement('a');
+                    card.href = bookingUrl;
+                    card.className = "group bg-[#202020] border border-[#2C2C2C] hover:border-[#C5A880] transition duration-300 flex flex-col overflow-hidden";
+
+                    card.innerHTML = `
+                        <div class="aspect-[4/5] bg-[#141414] overflow-hidden relative">
+                            <img src="${avatar}" alt="${displayName}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#202020] via-transparent to-transparent opacity-80"></div>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-widest text-[#C5A880] mb-1">${specialty}</p>
+                                <h2 class="serif-title text-2xl text-white font-normal">${displayName}</h2>
+                            </div>
+                            <div class="pt-2">
+                                <span class="block text-center border border-[#C5A880] text-[#C5A880] group-hover:bg-[#C5A880] group-hover:text-black py-3 text-xs uppercase tracking-widest font-semibold transition duration-300">
+                                    Выбрать время →
+                                </span>
+                            </div>
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error("Ошибка загрузки студии:", err);
+                grid.innerHTML = `<div class="col-span-full text-center text-red-400 py-12">Ошибка загрузки данных. Попробуйте обновить страницу.</div>`;
+            }
+        }
+
+        loadStudioMasters();
+    </script>
+</body>
+</html>

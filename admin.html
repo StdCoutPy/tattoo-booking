@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Личный кабинет мастера | INK & GOLD</title>
+  <script src="https://tailwindcss.com"></script>
+  <link href="https://googleapis.com" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0D0D0D; color: #E0E0E0; }
+    .serif { font-family: 'Cormorant Garamond', serif; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Шапка -->
+  <header class="border-b border-[#2C2C2C] bg-[#141414] px-6 py-4">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <div>
+        <span class="text-xs uppercase tracking-[0.25em] text-[#C5A880]">Кабинет мастера</span>
+        <h1 id="header-master-name" class="serif text-2xl font-semibold text-white">Загрузка...</h1>
+      </div>
+      <a id="public-page-link" href="#" target="_blank" class="hidden text-xs uppercase tracking-wider border border-[#C5A880] text-[#C5A880] px-4 py-2 hover:bg-[#C5A880] hover:text-black transition">
+        Открыть мою страницу ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- Экран ошибки доступа -->
+  <div id="auth-error" class="hidden flex-grow flex items-center justify-center p-6">
+    <div class="bg-[#141414] border border-red-900/50 p-8 max-w-md w-full text-center">
+      <h2 class="serif text-2xl text-white mb-2">Доступ запрещён</h2>
+      <p id="auth-error-text" class="text-sm text-gray-400">Неверная или устаревшая ссылка доступа. Запросите персональную ссылку у администратора студии.</p>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <main id="admin-content" class="hidden max-w-5xl w-full mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+    <!-- Левая колонка: Настройки профиля -->
+    <section class="lg:col-span-6 bg-[#141414] border border-[#2C2C2C] p-6">
+      <h2 class="serif text-2xl text-white mb-6 border-b border-[#2C2C2C] pb-3">Настройки профиля</h2>
+
+      <form id="profile-form" class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Ваше имя / псевдоним</label>
+          <input type="text" id="inp-name" required class="w-full bg-[#0D0D0D] border border-[#3A3A3A] px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A880]" />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Название студии / бренда</label>
+          <input type="text" id="inp-company" class="w-full bg-[#0D0D0D] border border-[#3A3A3A] px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A880]" />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Специализация (стиль)</label>
+          <input type="text" id="inp-specialty" placeholder="Например: Графика, Реализм, Микрореализм" class="w-full bg-[#0D0D0D] border border-[#3A3A3A] px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A880]" />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Ссылка на главное фото (аватар)</label>
+          <input type="url" id="inp-avatar" placeholder="https://ibb.co..." class="w-full bg-[#0D0D0D] border border-[#3A3A3A] px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A880]" />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Фото работ в портфолио (каждая ссылка с новой строки)</label>
+          <textarea id="inp-photos" rows="4" placeholder="https://ibb.cowork1.jpg&#10;https://ibb.cowork2.jpg" class="w-full bg-[#0D0D0D] border border-[#3A3A3A] px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#C5A880]"></textarea>
+        </div>
+
+        <button type="submit" id="save-btn" class="w-full bg-[#C5A880] text-black font-semibold text-xs uppercase tracking-[0.2em] py-3.5 hover:bg-[#d4b890] transition">
+          Сохранить изменения
+        </button>
+      </form>
+    </section>
+
+    <!-- Правая колонка: Записи клиентов -->
+    <section class="lg:col-span-6 bg-[#141414] border border-[#2C2C2C] p-6">
+      <div class="flex justify-between items-center mb-6 border-b border-[#2C2C2C] pb-3">
+        <h2 class="serif text-2xl text-white">Мои записи</h2>
+        <span id="bookings-count" class="text-xs bg-[#2C2C2C] text-[#C5A880] px-2.5 py-1">0</span>
+      </div>
+
+      <div id="bookings-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+        <!-- Карточки записей подгрузятся сюда -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ВСТАВЬТЕ СЮДА URL ВАШЕЙ НОВОЙ ФУНКЦИИ YANDEX CLOUD
+    const ADMIN_API_URL = "https://yandexcloud.net";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
+    function showError(msg) {
+      document.getElementById("header-master-name").innerText = "Ошибка";
+      document.getElementById("auth-error").classList.remove("hidden");
+      if (msg) document.getElementById("auth-error-text").innerText = msg;
+    }
+
+    async function loadDashboard() {
+      if (!token) {
+        showError("В ссылке отсутствует ключ доступа (?token=...).");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${ADMIN_API_URL}?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || "Ошибка авторизации");
+          return;
+        }
+
+        const { master, bookings } = data;
+
+        // Показываем интерфейс
+        document.getElementById("admin-content").classList.remove("hidden");
+        document.getElementById("header-master-name").innerText = master.name || master.id;
+
+        // Ссылка на публичную страницу мастера
+        const pubLink = document.getElementById("public-page-link");
+        pubLink.href = `index.html?master=${encodeURIComponent(master.id)}`;
+        pubLink.classList.remove("hidden");
+
+        // Заполняем форму профиля
+        document.getElementById("inp-name").value = master.name || "";
+        document.getElementById("inp-company").value = master.company_name || "";
+        document.getElementById("inp-specialty").value = master.specialty || "";
+        document.getElementById("inp-avatar").value = master.avatar_url || "";
+        document.getElementById("inp-photos").value = Array.isArray(master.photos) ? master.photos.join("\n") : "";
+
+        // Отрисовываем записи
+        renderBookings(bookings || []);
+      } catch (err) {
+        console.error(err);
+        showError("Не удалось подключиться к серверу.");
+      }
+    }
+
+    function renderBookings(bookings) {
+      const container = document.getElementById("bookings-list");
+      document.getElementById("bookings-count").innerText = bookings.length;
+
+      if (bookings.length === 0) {
+        container.innerHTML = `<p class="text-sm text-gray-500 text-center py-8">Активных записей пока нет.</p>`;
+        return;
+      }
+
+      container.innerHTML = bookings.map(b => `
+        <div class="bg-[#0D0D0D] border border-[#2C2C2C] p-4 flex justify-between items-start gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[#C5A880] font-semibold text-sm">${b.date} в ${b.time}</span>
+            </div>
+            <p class="text-white font-medium text-sm">${b.name}</p>
+            <p class="text-gray-400 text-xs mt-0.5">${b.phone}</p>
+            ${b.note ? `<p class="text-gray-500 text-xs mt-2 italic">«${b.note}»</p>` : ""}
+          </div>
+          <button onclick="deleteBooking('${b.id}')" class="text-xs text-red-400 hover:text-red-300 border border-red-900/50 px-2.5 py-1 transition">
+            Удалить
+          </button>
+        </div>
+      `).join("");
+    }
+
+    // Сохранение профиля
+    document.getElementById("profile-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("save-btn");
+      btn.innerText = "Сохранение...";
+      btn.disabled = true;
+
+      const photosRaw = document.getElementById("inp-photos").value;
+      const photosArray = photosRaw.split("\n").map(s => s.trim()).filter(Boolean);
+
+      try {
+        const res = await fetch(ADMIN_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token,
+            action: "update_profile",
+            name: document.getElementById("inp-name").value.trim(),
+            company_name: document.getElementById("inp-company").value.trim(),
+            specialty: document.getElementById("inp-specialty").value.trim(),
+            avatar_url: document.getElementById("inp-avatar").value.trim(),
+            photos: photosArray
+          })
+        });
+
+        if (!res.ok) throw new Error();
+        alert("Профиль успешно обновлён!");
+        document.getElementById("header-master-name").innerText = document.getElementById("inp-name").value.trim();
+      } catch {
+        alert("Ошибка при сохранении профиля.");
+      } finally {
+        btn.innerText = "Сохранить изменения";
+        btn.disabled = false;
+      }
+    });
+
+    // Удаление записи
+    async function deleteBooking(bookingId) {
+      if (!confirm("Удалить эту запись и освободить слот?")) return;
+
+      try {
+        const res = await fetch(ADMIN_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, action: "delete_booking", booking_id: bookingId })
+        });
+
+        if (!res.ok) throw new Error();
+        loadDashboard(); // Перезагружаем список
+      } catch {
+        alert("Не удалось удалить запись.");
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
